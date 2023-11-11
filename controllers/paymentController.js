@@ -25,10 +25,12 @@ module.exports.initPayment = async (req, res) => {
 
   // Set the urls
   payment.setUrls({
-    success: "https://mern-ecom-backend-5xg2.onrender.com/api/payment/success", // If payment Succeed
-    fail: "https://mern-ecom-backend-5xg2.onrender.com/api/payment/fail", // If payment failed
-    cancel: "https://mern-ecom-backend-5xg2.onrender.com/api/payment/cancel", // If user cancel payment
-    ipn: "https://mern-ecom-backend-5xg2.onrender.com/api/payment/ipn", // SSLCommerz will send http post request in this link
+    success:
+      "https://mern-burgerbuilder-backend.onrender.com/api/payment/success", // If payment Succeed
+    fail: "https://mern-burgerbuilder-backend.onrender.com/api/payment/fail", // If payment failed
+    cancel:
+      "https://mern-burgerbuilder-backend.onrender.com/api/payment/cancel", // If user cancel payment
+    ipn: "https://mern-burgerbuilder-backend.onrender.com/api/payment/ipn", // SSLCommerz will send http post request in this link
   });
 
   // Set order details

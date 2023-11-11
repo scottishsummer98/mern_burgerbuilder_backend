@@ -8,13 +8,19 @@ const path = require("path");
 
 module.exports.initPayment = async (req, res) => {
   const userId = req.user._id;
-  const ingredients = JSON.parse(req.query.ingredients);
+  const ingredients = req.body.ingredients;
   const profile = await Profile.findOne({ user: userId });
   const { address1, address2, city, state, postcode, country, phone } = profile;
-  const total_amount = ingredients.totalPrice;
-  const total_item = ingredients.ingredients
-    .map((item) => item.amount)
-    .reduce((a, b) => a + b, 0);
+  const total_amount =
+    ingredients.reduce(
+      (total, ingredient) => total + ingredient.amount * ingredient.price,
+      0
+    ) + 80;
+
+  const total_item = ingredients.reduce(
+    (total, ingredient) => total + ingredient.amount,
+    0
+  );
   const tran_id =
     "_" + Math.random().toString(36).substring(2, 9) + new Date().getTime();
   const payment = new PaymentSession(
@@ -77,10 +83,10 @@ module.exports.initPayment = async (req, res) => {
 
   response = await payment.paymentInit();
   const order = new Order({
-    cartItems: cartItems,
-    user: userId,
+    ingredients: ingredients,
     transaction_id: tran_id,
     address: profile,
+    user: userId,
   });
 
   if (response.status === "SUCCESS") {
@@ -99,26 +105,13 @@ module.exports.ipn = async (req, res) => {
     const data = await response.json();
     const order = await Order.updateOne(
       { transaction_id: tran_id },
-      { status: "Complete", sslStatus: data.status }
+      { status: "Complete", paymentMethod: "Paid", sslStatus: data.status }
     );
-    const myOrder = await Order.find({ transaction_id: tran_id });
-
-    for (const item of myOrder[0].cartItems) {
-      const productId = item.product;
-      const count = item.count;
-      const product = await Product.findById(productId);
-      if (product) {
-        product.sold += count;
-        product.quantity -= count;
-        await product.save();
-      }
-    }
-    await CartItem.deleteMany(order.cartItems);
   } else {
     await Order.deleteOne({ transaction_id: tran_id });
   }
   await payment.save();
-  return res.status(200).send(cartItems);
+  return res.status(200);
 };
 module.exports.paymentSuccess = async (req, res) => {
   res.sendFile(path.join(__basedir + "/public/success.html"));

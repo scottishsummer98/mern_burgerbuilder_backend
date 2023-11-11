@@ -4,7 +4,7 @@ module.exports.Order = model(
   "Order",
   Schema(
     {
-      ingredients: [{ type: { type: String }, amount: Number }],
+      ingredients: [{ type: { type: String }, amount: Number, price: Number }],
       transaction_id: {
         type: String,
         unique: true,
@@ -23,6 +23,7 @@ module.exports.Order = model(
         default: "Pending",
         enum: ["Pending", "Complete"],
       },
+      paymentMethod: String,
       sslStatus: String,
 
       user: {

@@ -8,7 +8,7 @@ const path = require("path");
 
 module.exports.initPayment = async (req, res) => {
   const userId = req.user._id;
-  const ingredients = req.body;
+  const ingredients = JSON.parse(req.query.ingredients);
   const profile = await Profile.findOne({ user: userId });
   const { address1, address2, city, state, postcode, country, phone } = profile;
   const total_amount = ingredients.totalPrice;

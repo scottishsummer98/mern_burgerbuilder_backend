@@ -105,7 +105,7 @@ module.exports.ipn = async (req, res) => {
     const data = await response.json();
     const order = await Order.updateOne(
       { transaction_id: tran_id },
-      { status: "Complete", paymentMethod: "Paid", sslStatus: data.status }
+      { status: "Complete", paymentStatus: "Paid", sslStatus: data.status }
     );
   } else {
     await Order.deleteOne({ transaction_id: tran_id });

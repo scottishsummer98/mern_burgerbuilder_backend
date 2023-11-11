@@ -23,7 +23,7 @@ module.exports.Order = model(
         default: "Pending",
         enum: ["Pending", "Complete"],
       },
-      paymentMethod: String,
+      paymentStatus: String,
       sslStatus: String,
 
       user: {

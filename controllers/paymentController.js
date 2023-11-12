@@ -103,7 +103,7 @@ module.exports.ipn = async (req, res) => {
       `https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id=${payment["val_id"]}&store_id=${process.env.SSLCOMMERZ_STORE_ID}&store_passwd=${process.env.SSLCOMMERZ_STORE_PASSWORD}&format=json&v=1`
     );
     const data = await response.json();
-    const order = await Order.updateOne(
+    await Order.updateOne(
       { transaction_id: tran_id },
       { status: "Complete", paymentStatus: "Paid", sslStatus: data.status }
     );
